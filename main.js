@@ -1,5 +1,6 @@
 
 var rowsCount;
+var previousElementClicked;
 (function intialLoad()
 {
     rowsCount = window.prompt('Enter the number of rows to be displayed per page?');
@@ -67,11 +68,38 @@ function CreatePaginationElement(text)
     element.style.backgroundColor = 'white';
     element.addEventListener('click', function(e)
     {
-        this.style.backgroundColor = '#337abc';
-        this.style.color ='white';
-        SetOthersInactive(element);
+        if(this.innerText == 'Previous')
+        {
+            let previousNode = previousElementClicked.previousSibling;
+            if(previousNode != null)
+            { 
+                previousNode.style.backgroundColor = '#337abc';
+                previousNode.style.color ='white';
+                previousElementClicked = previousNode;
+                SetOthersInactive(previousNode);
+            }
+        }
+        else if(this.innerText == 'Next')
+        {
+            let nextNode = previousElementClicked.nextSibling;
+            if(nextNode != null)
+            {
+                nextNode.style.backgroundColor = '#337abc';
+                nextNode.style.color ='white';
+                previousElementClicked = nextNode;
+                SetOthersInactive(nextNode); 
+            }
+        }
+        else
+        {
+            this.style.backgroundColor = '#337abc';
+            this.style.color ='white';
+            previousElementClicked = this;
+            SetOthersInactive(element);
+        }
     })
 
+    
     return element;
 }
 
@@ -93,7 +121,7 @@ function SetOthersInactive(element)
 function getData(element)
 {
     let end = element.innerText * rowsCount;
-    let start = end - rowsCount + 1;
+    let start = end - rowsCount;
     console.log("start", start);
     console.log("end", end);
     let filteredArray = myJSONData.slice(start, end);
